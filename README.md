@@ -42,13 +42,13 @@ PermissionRequester.requestSpecialPermission(context, DISPLAY_NOTIFICATION, succ
 
 **请求本地资源**
 
-请求本地图片
+跳转至资源管理器，选择一张图片
 
 ```java
 PickerRequester.pickImage(context, filePath -> {});
 ```
 
-请求本地视频
+跳转至资源管理器，选择一个视频
 
 ```java
 PickerRequester.pickVideo(context, filePath -> {});
@@ -56,13 +56,13 @@ PickerRequester.pickVideo(context, filePath -> {});
 
 **请求拍照**
 
-请求拍张照片
+跳转至相机，拍张照片
 
 ```java
 CaptureRequester.capImage(context, filePath -> {});
 ```
 
-请求录制一段视频
+跳转至相机，录制一段视频
 
 ```java
 CaptureRequester.capVideo(context, filePath -> {});
