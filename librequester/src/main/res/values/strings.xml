@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">LibRequester</string>
+    <string name="create_screenRecorder_error">Create ScreenRecorder error</string>
+    <string name="length_video">Length:</string>
+    <string name="gravando">Recording...</string>
+    <string name="stop">Stop</string>
+</resources>

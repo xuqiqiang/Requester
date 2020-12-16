@@ -1,0 +1,43 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.xuqiqiang.uikit.requester">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <application>
+        <activity
+            android:name=".proxy.KeyguardActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:theme="@style/RequesterProxyTranslucent" />
+        <activity
+            android:name=".proxy.PickerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:theme="@style/RequesterProxyTranslucent" />
+        <activity
+            android:name=".proxy.CaptureActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:theme="@style/RequesterProxyTranslucent" />
+        <activity
+            android:name=".proxy.PermissionActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:theme="@style/RequesterProxyTranslucent" />
+        <activity
+            android:name=".proxy.RequestResultActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:theme="@style/RequesterProxyTranslucent" />
+        <activity
+            android:name=".proxy.ShortcutActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:theme="@style/RequesterProxyTranslucent" />
+
+        <receiver
+            android:name=".utils.ShortcutReceiver"
+            android:exported="false" />
+    </application>
+</manifest>

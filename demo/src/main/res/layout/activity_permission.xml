@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:orientation="vertical"
+    tools:context=".PermissionActivity"
+    tools:ignore="HardcodedText">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <TextView
+            android:id="@+id/tv_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="单个权限"
+            android:textSize="20sp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="checkPermission"
+            android:text="检查打电话有没有权限" />
+
+        <Button
+            android:id="@+id/btn_call_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="requestPermission"
+            android:text="我要打电话" />
+
+        <TextView
+            android:id="@+id/tv_permissions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:padding="5dp"
+            android:text="多个权限"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btn_check_permissions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="checkPermissions"
+            android:text="检查读写外部内存、读写联系人、调用相机Api权限" />
+
+        <Button
+            android:id="@+id/btn_get_permissions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="requestPermissions"
+            android:text="获取读写外部内存、读写联系人、调用相机Api权限" />
+
+        <TextView
+            android:id="@+id/tv_display_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:padding="5dp"
+            android:text="特殊权限1-允许通知"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btn_check_display_notification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="checkDisplayNotification"
+            android:text="检查是否允许通知" />
+
+        <Button
+            android:id="@+id/btn_get_display_notification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="requestDisplayNotification"
+            android:text="请求允许通知" />
+
+        <TextView
+            android:id="@+id/tv_install_app"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:padding="5dp"
+            android:text="特殊权限2-安装未知来源应用\n（Android8.0以上）"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btn_check_install_app"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="checkInstallApp"
+            android:text="检查是否允许安装未知来源应用" />
+
+        <Button
+            android:id="@+id/btn_get_install_app"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="requestInstallApp"
+            android:text="请求允许安装未知来源应用" />
+
+        <TextView
+            android:id="@+id/tv_write_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:padding="5dp"
+            android:text="特殊权限3-修改系统设置\n（系统应用使用）"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btn_check_write_settins"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="checkWriteSettings"
+            android:text="检查是否允许修改系统设置" />
+
+        <Button
+            android:id="@+id/btn_get_wirte_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="requestWriteSettings"
+            android:text="请求允许修改系统设置" />
+
+        <TextView
+            android:id="@+id/tv_system_window"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:padding="5dp"
+            android:text="特殊权限4-设置悬浮窗\n(6.0以下默认可以使用)"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btn_check_system_window"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="checkSystemWindow"
+            android:text="检查是否允许设置悬浮窗" />
+
+        <Button
+            android:id="@+id/btn_get_system_window"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="requestSystemWindow"
+            android:text="请求允许设置悬浮窗" />
+    </LinearLayout>
+</ScrollView>

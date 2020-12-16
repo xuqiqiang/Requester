@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".DemoActivity"
+    tools:ignore="HardcodedText">
+    <item
+        android:id="@+id/action_goto_permission"
+        android:orderInCategory="100"
+        android:title="权限管理中心"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_goto_app_permission"
+        android:orderInCategory="100"
+        android:title="应用详情页"
+        app:showAsAction="never" />
+</menu>
