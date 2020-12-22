@@ -82,5 +82,9 @@
             android:name=".ScreenRecorderActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="请求屏幕录制" />
+        <activity
+            android:name=".PickerResultActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="处理结果" />
     </application>
 </manifest>

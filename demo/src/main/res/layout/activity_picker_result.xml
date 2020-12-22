@@ -14,31 +14,32 @@
         android:clipChildren="false"
         android:clipToPadding="false"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin">
+        android:padding="@dimen/activity_horizontal_margin">
 
-        <Button
+        <ImageView
+            android:id="@+id/iv_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="pickImage"
-            android:text="选择本地图片" />
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:visibility="gone" />
 
-        <Button
+        <VideoView
+            android:id="@+id/video_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="pickVideo"
-            android:text="选择本地视频" />
+            android:layout_height="match_parent"
+            android:visibility="gone" />
 
-        <Button
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tv_contact"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="cropImage"
-            android:text="剪裁本地图片" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="pickContact"
-            android:text="选择联系人" />
+            android:text="联系人 10086 / 10010"
+            android:textColor="@color/dark"
+            android:textSize="17sp"
+            android:visibility="gone"
+            android:autoLink="email|phone|web"
+            tools:visibility="visible"/>
     </LinearLayout>
 </ScrollView>

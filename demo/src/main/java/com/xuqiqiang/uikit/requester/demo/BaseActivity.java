@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
 
 import com.xuqiqiang.uikit.activity.BaseAppCompatActivity;
+import com.xuqiqiang.uikit.utils.Logger;
 
 public class BaseActivity extends BaseAppCompatActivity {
 
@@ -13,6 +14,7 @@ public class BaseActivity extends BaseAppCompatActivity {
         super.onCreate(savedInstanceState);
         ActionBar mActionBar = getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
+        Logger.enabled = true;
     }
 
     @Override

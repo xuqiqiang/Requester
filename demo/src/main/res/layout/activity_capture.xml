@@ -28,19 +28,5 @@
             android:layout_height="wrap_content"
             android:onClick="pickVideo"
             android:text="录制视频" />
-
-        <ImageView
-            android:id="@+id/iv_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:scaleType="fitXY"
-            android:visibility="gone" />
-
-        <VideoView
-            android:id="@+id/video_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
     </LinearLayout>
 </ScrollView>

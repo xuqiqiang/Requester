@@ -3,14 +3,13 @@ package com.xuqiqiang.uikit.requester.demo;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.MediaController;
-import android.widget.VideoView;
 
 import com.xuqiqiang.uikit.requester.ScreenRecorderRequester;
 import com.xuqiqiang.uikit.view.ToastMaster;
 
 import java.io.File;
 
+import static com.xuqiqiang.uikit.requester.demo.PickerResultActivity.TYPE_VIDEO;
 import static com.xuqiqiang.uikit.utils.Utils.mMainHandler;
 
 public class ScreenRecorderActivity extends BaseActivity {
@@ -41,13 +40,7 @@ public class ScreenRecorderActivity extends BaseActivity {
             @Override
             public void onComplete(File file) {
                 mMainHandler.post(() -> {
-                    VideoView videoView = findViewById(R.id.video_view);
-                    videoView.setVisibility(View.VISIBLE);
-                    videoView.setVideoPath(file.getPath());
-                    MediaController mediaController = new MediaController(ScreenRecorderActivity.this);
-                    videoView.setMediaController(mediaController);
-                    videoView.requestFocus();
-                    videoView.start();
+                    PickerResultActivity.start(ScreenRecorderActivity.this, TYPE_VIDEO, file.getPath(), null);
                 });
             }
         });
