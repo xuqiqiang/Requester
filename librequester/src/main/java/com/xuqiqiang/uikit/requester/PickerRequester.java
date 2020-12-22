@@ -78,7 +78,7 @@ public class PickerRequester {
                     intent.putExtra("scale", true);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(dstPath)));
                     intent.putExtra("return-data", false);
-                    intent.putExtra("scaleUpIfNeeded", true);//黑边
+                    intent.putExtra("scaleUpIfNeeded", true);
                     intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
                     intent.putExtra("noFaceDetection", true); // no face detection
                     ActivityRequester.startActivityForResult(context, intent, new ActivityRequester.OnActivityResultListener() {
