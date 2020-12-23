@@ -118,6 +118,8 @@ public class ActivityRequester {
 
     // endregion
 
+    // region Adapter
+
     public interface OnActivityResultListener {
         void onActivityResult(int resultCode, @Nullable Intent data);
     }
@@ -372,4 +374,5 @@ public class ActivityRequester {
             return super.hashCode();
         }
     }
+    // endregion
 }
