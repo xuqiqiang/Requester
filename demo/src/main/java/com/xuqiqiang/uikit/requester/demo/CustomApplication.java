@@ -3,6 +3,7 @@ package com.xuqiqiang.uikit.requester.demo;
 import android.app.Application;
 
 import com.squareup.leakcanary.LeakCanary;
+import com.xuqiqiang.uikit.utils.Logger;
 
 /**
  * Created by xuqiqiang on 2020/02/28.
@@ -17,5 +18,6 @@ public class CustomApplication extends Application {
             return;
         }
         LeakCanary.install(this);
+        Logger.enabled = BuildConfig.DEBUG;
     }
 }
