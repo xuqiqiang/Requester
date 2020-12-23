@@ -31,16 +31,45 @@ public class ActivityRequester {
         RequestResultActivity.start(context, intent, listener);
     }
 
-    public static ActivityLifecycleAdapter postOnResume(final Activity a, final Runnable r) {
+    public static ActivityLifecycleAdapter postOnResume(Runnable r) {
+        Activity topActivity = Utils.getTopActivity();
+        if (topActivity == null) return null;
+        return postOnResume(topActivity, r);
+    }
+
+    public static ActivityLifecycleAdapter postOnResume(Activity a, Runnable r) {
         ActivityOnResumeAdapter adapter = new ActivityOnResumeAdapter(a, r);
         a.getApplication().registerActivityLifecycleCallbacks(adapter);
         return adapter;
     }
 
-    public static ActivityLifecycleAdapter postOnDestroyed(final Activity a, final Runnable r) {
+    public static ActivityLifecycleAdapter postOnDestroyed(Runnable r) {
+        Activity topActivity = Utils.getTopActivity();
+        if (topActivity == null) return null;
+        return postOnDestroyed(topActivity, r);
+    }
+
+    public static ActivityLifecycleAdapter postOnDestroyed(Activity a, Runnable r) {
         ActivityOnDestroyAdapter adapter = new ActivityOnDestroyAdapter(a, r);
         a.getApplication().registerActivityLifecycleCallbacks(adapter);
         return adapter;
+    }
+
+    public static boolean postDelayed(Runnable r, long delayMillis) {
+        Activity topActivity = Utils.getTopActivity();
+        if (topActivity == null) return false;
+        return postDelayed(topActivity, r, delayMillis);
+    }
+
+    public static boolean postDelayed(@NonNull Activity a, Runnable r, long delayMillis) {
+        if (r == null) return false;
+        Event event = new DelayedEvent(r);
+        if (mMainHandler.postDelayed(event, delayMillis)) {
+            mEventList.add(event);
+            event.setActivityLifecycleAdapter(postOnDestroyed(a, new ClearRunnable(event)));
+            return true;
+        }
+        return false;
     }
 
     public static void removeCallbacks(@NonNull Runnable r) {
@@ -53,36 +82,40 @@ public class ActivityRequester {
             mMainHandler.removeCallbacks(event);
         }
     }
+    // endregion
 
-    public static boolean postDelayed(@NonNull final Activity a, @NonNull final Runnable r, long delayMillis) {
+    // region Fragment
+    public static FragmentLifecycleAdapter postOnResume(final Fragment f, final Runnable r) {
+        return postOnResume(f.getActivity().getSupportFragmentManager(), f, r);
+    }
+
+    public static FragmentLifecycleAdapter postOnResume(@NonNull FragmentManager fm, final Fragment f, final Runnable r) {
+        FragmentOnResumeAdapter adapter = new FragmentOnResumeAdapter(f, r);
+        fm.registerFragmentLifecycleCallbacks(adapter, true);
+        return adapter;
+    }
+
+    public static FragmentLifecycleAdapter postOnDestroyed(final Fragment f, final Runnable r) {
+        return postOnDestroyed(f.getActivity().getSupportFragmentManager(), f, r);
+    }
+
+    public static FragmentLifecycleAdapter postOnDestroyed(@NonNull FragmentManager fm, final Fragment f, final Runnable r) {
+        FragmentOnDestroyAdapter adapter = new FragmentOnDestroyAdapter(f, r);
+        fm.registerFragmentLifecycleCallbacks(adapter, true);
+        return adapter;
+    }
+
+    public static boolean postDelayed(@NonNull Fragment f, Runnable r, long delayMillis) {
         if (r == null) return false;
         Event event = new DelayedEvent(r);
         if (mMainHandler.postDelayed(event, delayMillis)) {
             mEventList.add(event);
-            event.setActivityLifecycleAdapter(postOnDestroyed(a, new ClearRunnable(event)));
+            event.setFragmentLifecycleAdapter(postOnDestroyed(f, new ClearRunnable(event)));
             return true;
         }
         return false;
     }
-    // endregion
 
-    // region Fragment
-    public static void postOnResume(final Fragment f, final Runnable r) {
-        postOnResume(f.getActivity().getSupportFragmentManager(), f, r);
-    }
-
-    public static void postOnResume(@NonNull FragmentManager fm, final Fragment f, final Runnable r) {
-        fm.registerFragmentLifecycleCallbacks(new FragmentOnResumeAdapter(f, r), true);
-    }
-
-    public static void postOnDestroyed(final Fragment f, final Runnable r) {
-        postOnDestroyed(f.getActivity().getSupportFragmentManager(), f, r);
-    }
-
-    public static void postOnDestroyed(@NonNull FragmentManager fm, final Fragment f, final Runnable r) {
-        fm.registerFragmentLifecycleCallbacks(
-                new FragmentOnDestroyAdapter(f, r), true);
-    }
     // endregion
 
     public interface OnActivityResultListener {
@@ -209,12 +242,17 @@ public class ActivityRequester {
     }
 
     public static class FragmentLifecycleAdapter extends FragmentManager.FragmentLifecycleCallbacks {
-        private final WeakReference<Fragment> rFragment;
-        private final WeakReference<Runnable> rRunnable;
+        final WeakReference<Fragment> rFragment;
+        //        private final WeakReference<Runnable> rRunnable;
+        private final WeakReference<Event> rEvent;
 
         public FragmentLifecycleAdapter(Fragment fragment, Runnable runnable) {
             this.rFragment = new WeakReference<>(fragment);
-            this.rRunnable = new WeakReference<>(runnable);
+//            this.rRunnable = new WeakReference<>(runnable);
+            Event event = new Event(runnable);
+            event.setFragmentLifecycleAdapter(this);
+            mEventList.add(event);
+            this.rEvent = new WeakReference<>(event);
         }
 
         @Override
@@ -228,18 +266,27 @@ public class ActivityRequester {
         protected void handleEvent(@NonNull FragmentManager fm, @NonNull Fragment fragment) {
             Fragment f = rFragment.get();
             if (f == fragment) {
-                Runnable r = rRunnable.get();
-                if (r != null) r.run();
+                Event e = rEvent.get();
+                if (e != null) e.run();
                 clear(fm);
             } else if (f == null) {
                 clear(fm);
             }
         }
 
-        protected void clear(@NonNull FragmentManager fm) {
-            fm.unregisterFragmentLifecycleCallbacks(this);
+        protected void clear(FragmentManager fm) {
+            if (fm != null) fm.unregisterFragmentLifecycleCallbacks(this);
+            else {
+                Fragment f = rFragment.get();
+                if (f != null) {
+                    fm = f.getFragmentManager();
+                    if (fm != null) fm.unregisterFragmentLifecycleCallbacks(this);
+                }
+            }
             rFragment.clear();
-            rRunnable.clear();
+            Event e = rEvent.get();
+            if (e != null) mEventList.remove(e);
+            rEvent.clear();
         }
     }
 
@@ -275,6 +322,7 @@ public class ActivityRequester {
     public static class Event implements Runnable {
         private final WeakReference<Runnable> rRunnable;
         protected WeakReference<ActivityLifecycleAdapter> rActivityAdapter;
+        protected WeakReference<FragmentLifecycleAdapter> rFragmentAdapter;
 
         public Event(Runnable runnable) {
             this.rRunnable = new WeakReference<>(runnable);
@@ -282,6 +330,10 @@ public class ActivityRequester {
 
         public void setActivityLifecycleAdapter(ActivityLifecycleAdapter activityLifecycleAdapter) {
             this.rActivityAdapter = new WeakReference<>(activityLifecycleAdapter);
+        }
+
+        public void setFragmentLifecycleAdapter(FragmentLifecycleAdapter fragmentLifecycleAdapter) {
+            this.rFragmentAdapter = new WeakReference<>(fragmentLifecycleAdapter);
         }
 
         @Override
@@ -296,6 +348,11 @@ public class ActivityRequester {
                 ActivityLifecycleAdapter adapter = rActivityAdapter.get();
                 if (adapter != null) {
                     adapter.clear(adapter.rActivity.get());
+                }
+            } else if (this.rFragmentAdapter != null) {
+                FragmentLifecycleAdapter adapter = rFragmentAdapter.get();
+                if (adapter != null) {
+                    adapter.clear(null);
                 }
             }
         }
