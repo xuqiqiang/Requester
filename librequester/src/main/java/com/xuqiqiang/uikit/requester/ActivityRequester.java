@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import com.xuqiqiang.uikit.requester.proxy.RequestResultActivity;
 import com.xuqiqiang.uikit.utils.Utils;
 
+import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class ActivityRequester {
 
     //    private static final Map<String, WeakReference<Event>> mEventMap = new HashMap<>();
 //    private static final Set<ActivityLifecycleAdapter> mActivityLifecycleAdapterMap = new HashSet<>();
+    public static final int DESTROY_ON_DESTROY = 0, DESTROY_ON_STOP = 1, DESTROY_ON_PAUSE = 2;
     private static final List<Event> mEventList = new LinkedList<>();
 
     // region Activity
@@ -50,7 +52,11 @@ public class ActivityRequester {
     }
 
     public static ActivityLifecycleAdapter postOnDestroyed(Activity a, Runnable r) {
-        ActivityOnDestroyAdapter adapter = new ActivityOnDestroyAdapter(a, r);
+        return postOnDestroyed(a, DESTROY_ON_DESTROY, r);
+    }
+
+    public static ActivityLifecycleAdapter postOnDestroyed(Activity a, int executeTime, Runnable r) {
+        ActivityOnDestroyAdapter adapter = new ActivityOnDestroyAdapter(a, r, executeTime);
         a.getApplication().registerActivityLifecycleCallbacks(adapter);
         return adapter;
     }
@@ -138,26 +144,43 @@ public class ActivityRequester {
 
     private static class ActivityOnDestroyAdapter extends ActivityLifecycleAdapter {
 
-        public ActivityOnDestroyAdapter(Activity activity, Runnable runnable) {
+        private final int executeTime;
+
+        public ActivityOnDestroyAdapter(Activity activity, Runnable runnable, int executeTime) {
             super(activity, runnable);
+            this.executeTime = executeTime;
+        }
+
+        @Override
+        public void onActivityPaused(@NonNull Activity activity) {
+            if (executeTime == DESTROY_ON_PAUSE && activity.isFinishing())
+                handleEvent(activity);
+        }
+
+        @Override
+        public void onActivityStopped(@NonNull Activity activity) {
+            if (executeTime == DESTROY_ON_STOP && activity.isFinishing())
+                handleEvent(activity);
         }
 
         @Override
         public void onActivityDestroyed(@NonNull Activity activity) {
-            handleEvent(activity);
+            if (executeTime == DESTROY_ON_DESTROY)
+                handleEvent(activity);
         }
     }
 
     public static class ActivityLifecycleAdapter implements Application.ActivityLifecycleCallbacks {
         final WeakReference<Activity> rActivity;
-        private final WeakReference<Event> rEvent;
+        private Event event;
+//        private final WeakReference<Event> rEvent;
 
         public ActivityLifecycleAdapter(Activity activity, Runnable runnable) {
             this.rActivity = new WeakReference<>(activity);
-            Event event = new Event(runnable);
+            this.event = new Event(runnable);
             event.setActivityLifecycleAdapter(this);
             mEventList.add(event);
-            this.rEvent = new WeakReference<>(event);
+//            this.rEvent = new WeakReference<>(event);
         }
 
         @Override
@@ -167,27 +190,22 @@ public class ActivityRequester {
 
         @Override
         public void onActivityStarted(@NonNull Activity activity) {
-
         }
 
         @Override
         public void onActivityResumed(@NonNull Activity activity) {
-
         }
 
         @Override
         public void onActivityPaused(@NonNull Activity activity) {
-
         }
 
         @Override
         public void onActivityStopped(@NonNull Activity activity) {
-
         }
 
         @Override
         public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {
-
         }
 
         @Override
@@ -201,8 +219,7 @@ public class ActivityRequester {
         protected void handleEvent(@NonNull Activity activity) {
             Activity a = rActivity.get();
             if (a == activity) {
-                Event e = rEvent.get();
-                if (e != null) e.run();
+                if (event != null) event.run();
                 clear(activity);
             } else if (a == null) {
                 clear(activity);
@@ -213,9 +230,11 @@ public class ActivityRequester {
             if (activity == null) Utils.getApp().unregisterActivityLifecycleCallbacks(this);
             else activity.getApplication().unregisterActivityLifecycleCallbacks(this);
             rActivity.clear();
-            Event e = rEvent.get();
-            if (e != null) mEventList.remove(e);
-            rEvent.clear();
+            if (event != null) {
+                event.clearReference();
+                mEventList.remove(event);
+                event = null;
+            }
         }
     }
 
@@ -246,15 +265,16 @@ public class ActivityRequester {
     public static class FragmentLifecycleAdapter extends FragmentManager.FragmentLifecycleCallbacks {
         final WeakReference<Fragment> rFragment;
         //        private final WeakReference<Runnable> rRunnable;
-        private final WeakReference<Event> rEvent;
+        private Event event;
+//        private final WeakReference<Event> rEvent;
 
         public FragmentLifecycleAdapter(Fragment fragment, Runnable runnable) {
             this.rFragment = new WeakReference<>(fragment);
 //            this.rRunnable = new WeakReference<>(runnable);
-            Event event = new Event(runnable);
+            this.event = new Event(runnable);
             event.setFragmentLifecycleAdapter(this);
             mEventList.add(event);
-            this.rEvent = new WeakReference<>(event);
+//            this.rEvent = new WeakReference<>(event);
         }
 
         @Override
@@ -268,8 +288,9 @@ public class ActivityRequester {
         protected void handleEvent(@NonNull FragmentManager fm, @NonNull Fragment fragment) {
             Fragment f = rFragment.get();
             if (f == fragment) {
-                Event e = rEvent.get();
-                if (e != null) e.run();
+//                Event e = rEvent.get();
+//                if (e != null) e.run();
+                if (event != null) event.run();
                 clear(fm);
             } else if (f == null) {
                 clear(fm);
@@ -286,9 +307,15 @@ public class ActivityRequester {
                 }
             }
             rFragment.clear();
-            Event e = rEvent.get();
-            if (e != null) mEventList.remove(e);
-            rEvent.clear();
+//            Event e = rEvent.get();
+//            if (e != null) mEventList.remove(e);
+//            rEvent.clear();
+//            mEventList.remove(event);
+            if (event != null) {
+                event.clearReference();
+                mEventList.remove(event);
+                event = null;
+            }
         }
     }
 
@@ -316,32 +343,33 @@ public class ActivityRequester {
 
         @Override
         public void run() {
-            clear();
             super.run();
+            clear();
         }
     }
 
     public static class Event implements Runnable {
-        private final WeakReference<Runnable> rRunnable;
-        protected WeakReference<ActivityLifecycleAdapter> rActivityAdapter;
-        protected WeakReference<FragmentLifecycleAdapter> rFragmentAdapter;
+        private final SoftReference<Runnable> rRunnable;
+        private SoftReference<ActivityLifecycleAdapter> rActivityAdapter;
+        private SoftReference<FragmentLifecycleAdapter> rFragmentAdapter;
 
         public Event(Runnable runnable) {
-            this.rRunnable = new WeakReference<>(runnable);
+            this.rRunnable = new SoftReference<>(runnable);
         }
 
         public void setActivityLifecycleAdapter(ActivityLifecycleAdapter activityLifecycleAdapter) {
-            this.rActivityAdapter = new WeakReference<>(activityLifecycleAdapter);
+            this.rActivityAdapter = new SoftReference<>(activityLifecycleAdapter);
         }
 
         public void setFragmentLifecycleAdapter(FragmentLifecycleAdapter fragmentLifecycleAdapter) {
-            this.rFragmentAdapter = new WeakReference<>(fragmentLifecycleAdapter);
+            this.rFragmentAdapter = new SoftReference<>(fragmentLifecycleAdapter);
         }
 
         @Override
         public void run() {
             mEventList.remove(this);
             Runnable r = rRunnable.get();
+            clearReference();
             if (r != null) r.run();
         }
 
@@ -357,6 +385,13 @@ public class ActivityRequester {
                     adapter.clear(null);
                 }
             }
+            clearReference();
+        }
+
+        public void clearReference() {
+            rRunnable.clear();
+            if (this.rActivityAdapter != null) rActivityAdapter.clear();
+            if (this.rFragmentAdapter != null) rFragmentAdapter.clear();
         }
 
         @Override

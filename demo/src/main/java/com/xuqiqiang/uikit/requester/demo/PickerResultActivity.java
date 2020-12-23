@@ -15,11 +15,13 @@ import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.xuqiqiang.uikit.requester.ActivityRequester;
 import com.xuqiqiang.uikit.requester.PickerRequester;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import static com.xuqiqiang.uikit.requester.ActivityRequester.DESTROY_ON_PAUSE;
 import static com.xuqiqiang.uikit.utils.BitmapUtils.getBitmapFromFile;
 
 public class PickerResultActivity extends BaseActivity {
@@ -30,8 +32,6 @@ public class PickerResultActivity extends BaseActivity {
     private static final String PARAM_TYPE = "PARAM_TYPE";
     private static final String PARAM_PATH = "PARAM_PATH";
     private static final String PARAM_URI = "PARAM_URI";
-
-    private MediaController mMediaController;
 
     public static void start(final Context context, final int type, String path, Uri uri) {
         Intent intent = new Intent(context, PickerResultActivity.class);
@@ -67,12 +67,12 @@ public class PickerResultActivity extends BaseActivity {
         VideoView videoView = findViewById(R.id.video_view);
         videoView.setVisibility(View.VISIBLE);
         videoView.setVideoPath(path);
-        if (mMediaController == null) {
-            mMediaController = new MediaController(this);
-            videoView.setMediaController(mMediaController);
-        }
+        MediaController mediaController = new MediaController(this);
+        videoView.setMediaController(mediaController);
         videoView.requestFocus();
         videoView.start();
+        // android.view.WindowLeaked: Activity has leaked window DecorView@c9d2553[] that was originally added here
+        ActivityRequester.postOnDestroyed(this, DESTROY_ON_PAUSE, mediaController::hide);
     }
 
     private void showContact() {
@@ -136,13 +136,5 @@ public class PickerResultActivity extends BaseActivity {
                 }
             }
         }.start();
-    }
-
-    // android.view.WindowLeaked: Activity has leaked window DecorView@c9d2553[] that was originally added here
-    @Override
-    protected void onPause() {
-        if (mMediaController != null && isFinishing())
-            mMediaController.hide();
-        super.onPause();
     }
 }
