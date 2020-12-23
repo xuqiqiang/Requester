@@ -12,10 +12,19 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.xuqiqiang.uikit.requester.proxy.RequestResultActivity;
+import com.xuqiqiang.uikit.utils.Utils;
 
 import java.lang.ref.WeakReference;
+import java.util.LinkedList;
+import java.util.List;
+
+import static com.xuqiqiang.uikit.utils.Utils.mMainHandler;
 
 public class ActivityRequester {
+
+    //    private static final Map<String, WeakReference<Event>> mEventMap = new HashMap<>();
+//    private static final Set<ActivityLifecycleAdapter> mActivityLifecycleAdapterMap = new HashSet<>();
+    private static final List<Event> mEventList = new LinkedList<>();
 
     // region Activity
     public static void startActivityForResult(Context context, Intent intent, OnActivityResultListener listener) {
@@ -26,8 +35,32 @@ public class ActivityRequester {
         a.getApplication().registerActivityLifecycleCallbacks(new ActivityOnResumeAdapter(a, r));
     }
 
-    public static void postOnDestroyed(final Activity a, final Runnable r) {
-        a.getApplication().registerActivityLifecycleCallbacks(new ActivityOnDestroyAdapter(a, r));
+    public static ActivityLifecycleAdapter postOnDestroyed(final Activity a, final Runnable r) {
+        ActivityOnDestroyAdapter adapter = new ActivityOnDestroyAdapter(a, r);
+        a.getApplication().registerActivityLifecycleCallbacks(adapter);
+        return adapter;
+    }
+
+    public static void removeCallbacks(@NonNull Runnable r) {
+        Event event = new Event(r);
+        int index = mEventList.indexOf(event);
+        if (index >= 0) {
+            event = mEventList.get(index);
+            event.clear();
+            mEventList.remove(event);
+            mMainHandler.removeCallbacks(event);
+        }
+    }
+
+    public static boolean postDelayed(@NonNull final Activity a, @NonNull final Runnable r, long delayMillis) {
+        if (r == null) return false;
+        Event event = new DelayedEvent(r);
+        if (mMainHandler.postDelayed(event, delayMillis)) {
+            mEventList.add(event);
+            event.setActivityLifecycleAdapter(postOnDestroyed(a, new ClearRunnable(event)));
+            return true;
+        }
+        return false;
     }
     // endregion
 
@@ -79,12 +112,15 @@ public class ActivityRequester {
     }
 
     public static class ActivityLifecycleAdapter implements Application.ActivityLifecycleCallbacks {
-        private final WeakReference<Activity> rActivity;
-        private final WeakReference<Runnable> rRunnable;
+        final WeakReference<Activity> rActivity;
+        private final WeakReference<Event> rEvent;
 
         public ActivityLifecycleAdapter(Activity activity, Runnable runnable) {
             this.rActivity = new WeakReference<>(activity);
-            this.rRunnable = new WeakReference<>(runnable);
+            Event event = new Event(runnable);
+            event.setActivityLifecycleAdapter(this);
+            mEventList.add(event);
+            this.rEvent = new WeakReference<>(event);
         }
 
         @Override
@@ -128,8 +164,8 @@ public class ActivityRequester {
         protected void handleEvent(@NonNull Activity activity) {
             Activity a = rActivity.get();
             if (a == activity) {
-                Runnable r = rRunnable.get();
-                if (r != null) r.run();
+                Event e = rEvent.get();
+                if (e != null) e.run();
                 clear(activity);
             } else if (a == null) {
                 clear(activity);
@@ -137,9 +173,12 @@ public class ActivityRequester {
         }
 
         protected void clear(Activity activity) {
-            activity.getApplication().unregisterActivityLifecycleCallbacks(this);
+            if (activity == null) Utils.getApp().unregisterActivityLifecycleCallbacks(this);
+            else activity.getApplication().unregisterActivityLifecycleCallbacks(this);
             rActivity.clear();
-            rRunnable.clear();
+            Event e = rEvent.get();
+            if (e != null) mEventList.remove(e);
+            rEvent.clear();
         }
     }
 
@@ -199,6 +238,79 @@ public class ActivityRequester {
             fm.unregisterFragmentLifecycleCallbacks(this);
             rFragment.clear();
             rRunnable.clear();
+        }
+    }
+
+    private static class ClearRunnable implements Runnable {
+
+        private Event event;
+
+        public ClearRunnable(Event event) {
+            this.event = event;
+        }
+
+        @Override
+        public void run() {
+            mEventList.remove(event);
+            mMainHandler.removeCallbacks(event);
+            event = null;
+        }
+    }
+
+    public static class DelayedEvent extends Event {
+
+        public DelayedEvent(Runnable runnable) {
+            super(runnable);
+        }
+
+        @Override
+        public void run() {
+            clear();
+            super.run();
+        }
+    }
+
+    public static class Event implements Runnable {
+        private final WeakReference<Runnable> rRunnable;
+        protected WeakReference<ActivityLifecycleAdapter> rActivityAdapter;
+
+        public Event(Runnable runnable) {
+            this.rRunnable = new WeakReference<>(runnable);
+        }
+
+        public void setActivityLifecycleAdapter(ActivityLifecycleAdapter activityLifecycleAdapter) {
+            this.rActivityAdapter = new WeakReference<>(activityLifecycleAdapter);
+        }
+
+        @Override
+        public void run() {
+            mEventList.remove(this);
+            Runnable r = rRunnable.get();
+            if (r != null) r.run();
+        }
+
+        public void clear() {
+            if (this.rActivityAdapter != null) {
+                ActivityLifecycleAdapter adapter = rActivityAdapter.get();
+                if (adapter != null) {
+                    adapter.clear(adapter.rActivity.get());
+                }
+            }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Event)) return false;
+            Event event = (Event) o;
+            return rRunnable.get() == event.rRunnable.get();
+        }
+
+        @Override
+        public int hashCode() {
+            Runnable r = rRunnable.get();
+            if (r != null) return r.hashCode();
+            return super.hashCode();
         }
     }
 }

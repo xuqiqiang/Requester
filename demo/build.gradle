@@ -33,4 +33,7 @@ dependencies {
     implementation(rootProject.ext.dependencies["appcompat"]) {
         exclude module: 'support-annotations'
     }
+    debugImplementation rootProject.ext.dependencies["canary-debug"]
+    releaseImplementation rootProject.ext.dependencies["canary-release"]
+    testImplementation rootProject.ext.dependencies["canary-release"]
 }

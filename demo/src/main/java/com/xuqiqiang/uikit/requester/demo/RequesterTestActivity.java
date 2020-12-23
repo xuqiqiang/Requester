@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.xuqiqiang.uikit.requester.ActivityRequester;
+import com.xuqiqiang.uikit.utils.Logger;
 import com.xuqiqiang.uikit.view.ToastMaster;
 
 import static com.xuqiqiang.uikit.requester.demo.RequesterTargetActivity.PARAM_NAME;
 import static com.xuqiqiang.uikit.requester.demo.RequesterTargetActivity.PARAM_RESULT;
 
 public class RequesterTestActivity extends BaseActivity {
+
+    private Runnable mRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,5 +41,15 @@ public class RequesterTestActivity extends BaseActivity {
     public void postOnDestroyed(View view) {
         ActivityRequester.postOnDestroyed(this, () -> ToastMaster.showToast(this, "onDestroyed"));
         finish();
+    }
+
+    public void postDelayed(View view) {
+//        mRunnable = () -> ToastMaster.showToast(this, "postDelayed");
+        mRunnable = () -> Logger.d("postDelayed");
+        ActivityRequester.postDelayed(this, mRunnable, 2000);
+    }
+
+    public void removeCallbacks(View view) {
+        ActivityRequester.removeCallbacks(mRunnable);
     }
 }
