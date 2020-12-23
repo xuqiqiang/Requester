@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.xuqiqiang.uikit.requester.ActivityRequester;
-import com.xuqiqiang.uikit.utils.Logger;
 import com.xuqiqiang.uikit.view.ToastMaster;
 
 import static com.xuqiqiang.uikit.requester.demo.RequesterTargetActivity.PARAM_NAME;
@@ -34,13 +33,17 @@ public class RequesterTestActivity extends BaseActivity {
     }
 
     public void postOnResume(View view) {
+        ToastMaster.showToast(this, "回来后会提示onDestroyed");
+        mRunnable = () -> ToastMaster.showToast(this, "onResume");
         startActivity(new Intent(this, RequesterTargetActivity.class));
-        ActivityRequester.postOnResume(this, () -> ToastMaster.showToast(this, "onResume"));
+        ActivityRequester.postOnResume(this, mRunnable);
     }
 
     public void postOnDestroyed(View view) {
-        ActivityRequester.postOnDestroyed(this, () -> ToastMaster.showToast(this, "onDestroyed"));
-        finish();
+        ToastMaster.showToast(this, "退出后会提示onDestroyed");
+        mRunnable = () -> ToastMaster.showToast(this, "onDestroyed");
+        ActivityRequester.postOnDestroyed(this, mRunnable);
+//        finish();
     }
 
     public void postDelayed(View view) {
@@ -49,6 +52,7 @@ public class RequesterTestActivity extends BaseActivity {
     }
 
     public void removeCallbacks(View view) {
+        ToastMaster.showToast(this, "已移除Callback");
         ActivityRequester.removeCallbacks(mRunnable);
     }
 }

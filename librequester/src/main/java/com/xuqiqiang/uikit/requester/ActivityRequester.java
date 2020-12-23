@@ -31,8 +31,10 @@ public class ActivityRequester {
         RequestResultActivity.start(context, intent, listener);
     }
 
-    public static void postOnResume(final Activity a, final Runnable r) {
-        a.getApplication().registerActivityLifecycleCallbacks(new ActivityOnResumeAdapter(a, r));
+    public static ActivityLifecycleAdapter postOnResume(final Activity a, final Runnable r) {
+        ActivityOnResumeAdapter adapter = new ActivityOnResumeAdapter(a, r);
+        a.getApplication().registerActivityLifecycleCallbacks(adapter);
+        return adapter;
     }
 
     public static ActivityLifecycleAdapter postOnDestroyed(final Activity a, final Runnable r) {
