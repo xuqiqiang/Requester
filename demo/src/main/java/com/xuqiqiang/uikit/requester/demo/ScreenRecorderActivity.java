@@ -56,10 +56,10 @@ public class ScreenRecorderActivity extends BaseActivity {
     }
 
     @Override
-    public void onDestroy() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mScreenRecorderRequester != null) {
+    public void onStop() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mScreenRecorderRequester != null && isFinishing()) {
             mScreenRecorderRequester.onDestroy();
         }
-        super.onDestroy();
+        super.onStop();
     }
 }

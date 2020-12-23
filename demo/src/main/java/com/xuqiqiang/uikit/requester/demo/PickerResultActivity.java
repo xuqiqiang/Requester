@@ -31,6 +31,8 @@ public class PickerResultActivity extends BaseActivity {
     private static final String PARAM_PATH = "PARAM_PATH";
     private static final String PARAM_URI = "PARAM_URI";
 
+    private MediaController mMediaController;
+
     public static void start(final Context context, final int type, String path, Uri uri) {
         Intent intent = new Intent(context, PickerResultActivity.class);
         intent.putExtra(PARAM_TYPE, type);
@@ -65,8 +67,10 @@ public class PickerResultActivity extends BaseActivity {
         VideoView videoView = findViewById(R.id.video_view);
         videoView.setVisibility(View.VISIBLE);
         videoView.setVideoPath(path);
-        MediaController mediaController = new MediaController(this);
-        videoView.setMediaController(mediaController);
+        if (mMediaController == null) {
+            mMediaController = new MediaController(this);
+            videoView.setMediaController(mMediaController);
+        }
         videoView.requestFocus();
         videoView.start();
     }
@@ -132,5 +136,13 @@ public class PickerResultActivity extends BaseActivity {
                 }
             }
         }.start();
+    }
+
+    // android.view.WindowLeaked: Activity has leaked window DecorView@c9d2553[] that was originally added here
+    @Override
+    protected void onPause() {
+        if (mMediaController != null && isFinishing())
+            mMediaController.hide();
+        super.onPause();
     }
 }

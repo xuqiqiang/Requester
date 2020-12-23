@@ -47,17 +47,33 @@ import static com.xuqiqiang.uikit.utils.Utils.mMainHandler;
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class ScreenRecorderRequester {
     public static final String ACTION_STOP = BuildConfig.LIBRARY_PACKAGE_NAME + ".action.STOP";
-    //    private static final int REQUEST_PERMISSIONS = 2;
-    private final Activity mContext;
     // members below will be initialized in onCreate()
     private final MediaProjectionManager mMediaProjectionManager;
     private final Notifications mNotifications;
+    //    private static final int REQUEST_PERMISSIONS = 2;
+    private Activity mContext;
     /**
      * <b>NOTE:</b>
      * {@code ScreenRecorder} should run in background Service
      * instead of a foreground Activity in this demonstrate.
      */
     private ScreenRecorder mRecorder;
+    private final BroadcastReceiver mStopActionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (ACTION_STOP.equals(intent.getAction())) {
+                stopRecorder();
+            }
+        }
+    };
+    private final MediaProjection.Callback mProjectionCallback = new MediaProjection.Callback() {
+        @Override
+        public void onStop() {
+            if (mRecorder != null) {
+                stopRecorder();
+            }
+        }
+    };
     private MediaProjection mMediaProjection;
     private VirtualDisplay mVirtualDisplay;
     private MediaCodecInfo[] mAvcCodecInfos; // avc codecs
@@ -78,29 +94,13 @@ public class ScreenRecorderRequester {
     private int sampleRate;
     private int audioChannelCount;
     private int audioProfile;
-    private BroadcastReceiver mStopActionReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (ACTION_STOP.equals(intent.getAction())) {
-                stopRecorder();
-            }
-        }
-    };
-    private MediaProjection.Callback mProjectionCallback = new MediaProjection.Callback() {
-        @Override
-        public void onStop() {
-            if (mRecorder != null) {
-                stopRecorder();
-            }
-        }
-    };
-
     private ScreenRecorderListener mScreenRecorderListener;
 
     public ScreenRecorderRequester(Activity context) {
         mContext = context;
-        mMediaProjectionManager = (MediaProjectionManager) context.getSystemService(MEDIA_PROJECTION_SERVICE);
-        mNotifications = new Notifications(context);
+        mMediaProjectionManager = (MediaProjectionManager) context.getApplicationContext()
+                .getSystemService(MEDIA_PROJECTION_SERVICE);
+        mNotifications = new Notifications(context.getApplicationContext());
         initParam();
     }
 
@@ -429,6 +429,7 @@ public class ScreenRecorderRequester {
             mMediaProjection.stop();
             mMediaProjection = null;
         }
+        mContext = null;
     }
 
     public static class ScreenRecorderListener {

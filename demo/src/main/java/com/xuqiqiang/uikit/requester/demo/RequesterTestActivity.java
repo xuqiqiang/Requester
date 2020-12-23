@@ -44,8 +44,7 @@ public class RequesterTestActivity extends BaseActivity {
     }
 
     public void postDelayed(View view) {
-//        mRunnable = () -> ToastMaster.showToast(this, "postDelayed");
-        mRunnable = () -> Logger.d("postDelayed");
+        mRunnable = () -> ToastMaster.showToast(this, "postDelayed");
         ActivityRequester.postDelayed(this, mRunnable, 2000);
     }
 
