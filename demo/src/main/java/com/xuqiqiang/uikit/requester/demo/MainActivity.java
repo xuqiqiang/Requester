@@ -39,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void test7(View view) {
+        startActivity(new Intent(this, DownloadActivity.class));
+    }
+
+    public void test8(View view) {
         startActivity(new Intent(this, ScreenRecorderActivity.class));
     }
 }

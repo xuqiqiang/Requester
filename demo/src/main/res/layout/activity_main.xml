@@ -57,6 +57,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="test7"
+            android:text="请求下载文件" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="test8"
             android:text="请求屏幕录制" />
     </LinearLayout>
 </ScrollView>

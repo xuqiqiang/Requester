@@ -80,6 +80,10 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="目标Activity" />
         <activity
+            android:name=".DownloadActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="请求下载文件" />
+        <activity
             android:name=".ScreenRecorderActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="请求屏幕录制" />

@@ -54,6 +54,12 @@ PickerRequester.pickImage(context, filePath -> {});
 PickerRequester.pickVideo(context, filePath -> {});
 ```
 
+跳转至通讯录，选择一个联系人
+
+```java
+PickerRequester.pickContact(context, uri -> {});
+```
+
 **请求拍照**
 
 跳转至相机，拍张照片
@@ -84,14 +90,6 @@ KeyguardRequester.requestAuthentication(context, success -> {});
 ShortcutRequester.requestPinShortcut(context, id, name, TargetActivity.class, icon, data, success -> {});
 ```
 
-**请求屏幕录制**
-
-- 不支持Android L以下的系统版本
-
-```java
-new ScreenRecorderRequester(this).startCapturing(new ScreenRecorderListener());
-```
-
 **请求Activity回调事件**
 
 ```java
@@ -104,6 +102,20 @@ ActivityRequester.postOnResume(activity, () -> {});
 
 ```java
 ActivityRequester.postOnDestroyed(activity, () -> {});
+```
+
+**请求下载文件**
+
+```java
+DownloadRequester.download(context, DOWNLOAD_URL, filePath -> {});
+```
+
+**请求屏幕录制**
+
+- 不支持Android L以下的系统版本
+
+```java
+new ScreenRecorderRequester(context).startCapturing(new ScreenRecorderListener());
 ```
 
 ## Apache License
