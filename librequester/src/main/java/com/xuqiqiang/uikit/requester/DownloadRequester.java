@@ -32,13 +32,30 @@ public class DownloadRequester {
     private static DownloadManager downloadManager;
 
     public static long download(Context context, String url, final DownloadListener listener) {
-        return download(context, Properties.build().url(url), listener);
+        return download(context, url, null, null, listener);
     }
 
-    public static long download(Context context, String url, String name, final DownloadListener listener) {
-        return download(context, Properties.build().url(url).name(name), listener);
+    public static long download(Context context, String url, String fileName, final DownloadListener listener) {
+        return download(context, url, null, fileName, listener);
     }
 
+    public static long download(Context context, String url, String dirPath, String fileName, final DownloadListener listener) {
+        if (TextUtils.isEmpty(url)) return -1;
+        File file;
+        fileName = !TextUtils.isEmpty(fileName) ? fileName : getFileName(url);
+        if (!TextUtils.isEmpty(dirPath)) {
+            file = new File(dirPath, fileName);
+        } else {
+            if (PermissionRequester.checkPermissions(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName);
+            } else {
+                file = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), fileName);
+            }
+        }
+        return download(context, new DownloadManager.Request(Uri.parse(url)), file, listener);
+    }
+
+    @Deprecated
     public static long download(Context context, Properties properties, final DownloadListener listener) {
         if (properties == null) return -1;
         if (TextUtils.isEmpty(properties.url)) return -1;
@@ -68,8 +85,6 @@ public class DownloadRequester {
                 file = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), properties.getName());
             }
         }
-//        String fileName = properties.name;
-//        File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), properties.name);
         return download(context, request, file, listener);
     }
 
