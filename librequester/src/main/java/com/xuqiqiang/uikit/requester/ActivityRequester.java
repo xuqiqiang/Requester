@@ -61,6 +61,10 @@ public class ActivityRequester {
         return adapter;
     }
 
+    /**
+     * @see ActivityRequester#postDelayed(Activity, Runnable, long)
+     */
+    @Deprecated
     public static boolean postDelayed(Runnable r, long delayMillis) {
         Activity topActivity = Utils.getTopActivity();
         if (topActivity == null) return false;
@@ -68,7 +72,7 @@ public class ActivityRequester {
     }
 
     public static boolean postDelayed(@NonNull Activity a, Runnable r, long delayMillis) {
-        if (r == null) return false;
+        if (r == null || a.isFinishing()) return false;
         Event event = new DelayedEvent(r);
         if (mMainHandler.postDelayed(event, delayMillis)) {
             mEventList.add(event);
