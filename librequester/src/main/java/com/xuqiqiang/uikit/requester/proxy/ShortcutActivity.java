@@ -9,7 +9,6 @@ import com.xuqiqiang.uikit.requester.PermissionRequester;
 import com.xuqiqiang.uikit.requester.ShortcutRequester;
 import com.xuqiqiang.uikit.requester.utils.ShortcutReceiver;
 import com.xuqiqiang.uikit.requester.utils.ShortcutUtils;
-import com.xuqiqiang.uikit.utils.Logger;
 import com.xuqiqiang.uikit.view.ToastMaster;
 
 import static com.xuqiqiang.uikit.utils.Utils.mMainHandler;
@@ -62,7 +61,6 @@ public class ShortcutActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        Logger.d("_test_j_ onPause");
         if (createShortcutTime > 0) {
             if (System.currentTimeMillis() - createShortcutTime < REQUEST_SHORTCUT_WAIT_TIME) {
                 createShortcutTime = 0;
@@ -75,7 +73,6 @@ public class ShortcutActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        Logger.d("_test_j_ onResume");
         if (isRequestPermission) {
             isRequestPermission = false;
             ShortcutUtils.createShortcut(this, mShortcutBean.id, mShortcutBean.name,

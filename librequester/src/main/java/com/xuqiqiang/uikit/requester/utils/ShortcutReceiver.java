@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.xuqiqiang.uikit.utils.Logger;
-
 public class ShortcutReceiver extends BroadcastReceiver {
     private static final String TAG = "ShortcutReceiver";
     private static Runnable mEvent;
@@ -21,6 +19,5 @@ public class ShortcutReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (mEvent != null) mEvent.run();
-        Logger.d(TAG, "onReceive:" + intent);
     }
 }

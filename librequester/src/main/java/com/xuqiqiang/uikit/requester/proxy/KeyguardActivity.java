@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.xuqiqiang.uikit.R;
 import com.xuqiqiang.uikit.requester.KeyguardRequester;
-import com.xuqiqiang.uikit.utils.Logger;
 import com.xuqiqiang.uikit.view.ToastMaster;
 
 public class KeyguardActivity extends Activity {
@@ -34,7 +32,7 @@ public class KeyguardActivity extends Activity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_DEVICE_CREDENTIALS) {
-            Logger.d("PHOTO_DEVICE_CREDENTIALS:" + resultCode);
+//            Logger.d("PHOTO_DEVICE_CREDENTIALS:" + resultCode);
             if (mListener != null)
                 mListener.onRequestAuthentication(resultCode == Activity.RESULT_OK);
             finish();

@@ -16,7 +16,6 @@ import androidx.core.app.ActivityCompat;
 
 import com.xuqiqiang.uikit.requester.PermissionRequester;
 import com.xuqiqiang.uikit.utils.ArrayUtils;
-import com.xuqiqiang.uikit.utils.Logger;
 import com.xuqiqiang.uikit.view.dialog.BaseDialog;
 
 import java.util.ArrayList;
@@ -104,7 +103,6 @@ public class PermissionActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        Logger.d("_test0_ onResume");
         if (isJumpToPermissionPage) {
             String[] requestPermissions = PermissionRequester.checkSelfPermission(this, mRequestPermissions);
             final List<String> deniedPermissions = new ArrayList<>();
@@ -127,22 +125,9 @@ public class PermissionActivity extends Activity {
     }
 
     @Override
-    protected void onStart() {
-        Logger.d("_test0_ onStart");
-        super.onStart();
-    }
-
-    @Override
     protected void onPause() {
-        Logger.d("_test0_ onPause");
         mPauseTime = System.currentTimeMillis();
         super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        Logger.d("_test0_ onStop");
-        super.onStop();
     }
 
     @Override
@@ -162,7 +147,6 @@ public class PermissionActivity extends Activity {
                     }
                 }
             }
-            Logger.d("_test0_ onRequestPermissionsResult " + deniedPermissions.isEmpty());
             if (!askNeverAgainPermissions.isEmpty() && getIntent().getBooleanExtra(PARAM_FORCE, false)) {
                 String permissionName = getIntent().getStringExtra(PARAM_NAME);
                 new BaseDialog.Builder(this)
@@ -215,7 +199,6 @@ public class PermissionActivity extends Activity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_PERMISSION_SPECIAL) {
-            Logger.d("_test0_ REQUEST_PERMISSION_SPECIAL:" + resultCode);
             if (System.currentTimeMillis() - mPauseTime < 10) {
                 mMainHandler.postDelayed(new Runnable() {
                     @Override
