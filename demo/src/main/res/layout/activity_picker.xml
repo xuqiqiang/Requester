@@ -38,6 +38,12 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="pickFile"
+            android:text="选择本地文件" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:onClick="pickContact"
             android:text="选择联系人" />
     </LinearLayout>

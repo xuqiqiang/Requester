@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.xuqiqiang.uikit.requester.PickerRequester;
+import com.xuqiqiang.uikit.view.ToastMaster;
 
 import static com.xuqiqiang.uikit.requester.demo.PickerResultActivity.TYPE_CONTACT;
 import static com.xuqiqiang.uikit.requester.demo.PickerResultActivity.TYPE_IMAGE;
@@ -43,6 +44,12 @@ public class PickerActivity extends BaseActivity {
                     }
                 });
             }
+        });
+    }
+
+    public void pickFile(View view) {
+        PickerRequester.pickFile(this, "*/*", (PickerRequester.OnPickPathListener) path -> {
+            ToastMaster.showToast(this, "path:" + path);
         });
     }
 

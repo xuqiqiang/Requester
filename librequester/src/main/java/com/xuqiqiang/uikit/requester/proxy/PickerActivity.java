@@ -87,8 +87,17 @@ public class PickerActivity extends Activity {
 
     private void onPick(Uri uri) {
         if (mOnPickUriListener != null) mOnPickUriListener.onPick(uri);
-        else if (mOnPickPathListener != null)
-            mOnPickPathListener.onPick(uri == null ? null : UriUtils.getPath(this, uri));
+        else if (mOnPickPathListener != null) {
+            String path = null;
+            if (uri != null) {
+                try {
+                    path = UriUtils.getPath(this, uri);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            mOnPickPathListener.onPick(path);
+        }
     }
 
     @Override
