@@ -27,22 +27,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void test4(View view) {
-        startActivity(new Intent(this, KeyguardActivity.class));
+        startActivity(new Intent(this, DeviceActivity.class));
     }
 
     public void test5(View view) {
-        startActivity(new Intent(this, ShortcutActivity.class));
+        startActivity(new Intent(this, KeyguardActivity.class));
     }
 
     public void test6(View view) {
-        startActivity(new Intent(this, RequesterTestActivity.class));
+        startActivity(new Intent(this, ShortcutActivity.class));
     }
 
     public void test7(View view) {
-        startActivity(new Intent(this, DownloadActivity.class));
+        startActivity(new Intent(this, RequesterTestActivity.class));
     }
 
     public void test8(View view) {
+        startActivity(new Intent(this, DownloadActivity.class));
+    }
+
+    public void test9(View view) {
         startActivity(new Intent(this, ScreenRecorderActivity.class));
     }
 }

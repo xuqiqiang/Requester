@@ -26,6 +26,11 @@
             android:exported="true"
             android:theme="@style/RequesterProxyTranslucent" />
         <activity
+            android:name=".proxy.DeviceActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:theme="@style/RequesterProxyTranslucent" />
+        <activity
             android:name=".proxy.RequestResultActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"

@@ -39,30 +39,36 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="test4"
-            android:text="请求设备解锁" />
+            android:text="请求系统api" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="test5"
-            android:text="请求桌面快捷方式" />
+            android:text="请求设备解锁" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="test6"
-            android:text="请求Activity回调事件" />
+            android:text="请求桌面快捷方式" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="test7"
-            android:text="请求下载文件" />
+            android:text="请求Activity回调事件" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="test8"
+            android:text="请求下载文件" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="test9"
             android:text="请求屏幕录制" />
     </LinearLayout>
 </ScrollView>

@@ -14,7 +14,7 @@ allprojects {
 }
 
 dependencies {
-	implementation 'com.github.xuqiqiang:Requester:1.0.4'
+	implementation 'com.github.xuqiqiang:Requester:1.0.5'
 }
 ```
 
@@ -72,6 +72,12 @@ CaptureRequester.capImage(context, filePath -> {});
 
 ```java
 CaptureRequester.capVideo(context, filePath -> {});
+```
+
+**请求开启蓝牙**
+
+```java
+DeviceRequester.enableBluetooth(context, success -> {});
 ```
 
 **请求设备解锁**

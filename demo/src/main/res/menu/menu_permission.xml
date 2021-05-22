@@ -9,7 +9,6 @@
         android:orderInCategory="100"
         android:title="权限管理中心"
         app:showAsAction="never" />
-
     <item
         android:id="@+id/action_goto_app_permission"
         android:orderInCategory="100"
