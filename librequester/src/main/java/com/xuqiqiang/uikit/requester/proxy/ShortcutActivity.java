@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.xuqiqiang.uikit.requester.PermissionRequester;
 import com.xuqiqiang.uikit.requester.ShortcutRequester;
 import com.xuqiqiang.uikit.requester.utils.ShortcutReceiver;
@@ -24,18 +23,24 @@ public class ShortcutActivity extends Activity {
     private long createShortcutTime;
     private Runnable mEvent;
 
-    public static void start(Context context, ShortcutRequester.ShortcutBean shortcutBean, ShortcutRequester.OnShortcutListener listener) {
+    public static void start(Context context, ShortcutRequester.ShortcutBean shortcutBean,
+        ShortcutRequester.OnShortcutListener listener) {
         mShortcutBean = shortcutBean;
         mListener = listener;
         Intent intent = new Intent(context, ShortcutActivity.class);
-        if (!(context instanceof Activity))
+        if (!(context instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
         context.startActivity(intent);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (mShortcutBean == null) {
+            finish();
+            return;
+        }
         ShortcutReceiver.post(new Runnable() {
             @Override
             public void run() {
@@ -43,7 +48,7 @@ public class ShortcutActivity extends Activity {
             }
         });
         ShortcutUtils.createShortcut(this, mShortcutBean.id, mShortcutBean.name,
-                mShortcutBean.className, mShortcutBean.iconId, mShortcutBean.data);
+            mShortcutBean.className, mShortcutBean.iconId, mShortcutBean.data);
         createShortcutTime = System.currentTimeMillis();
         mEvent = new Runnable() {
             @Override
@@ -76,7 +81,7 @@ public class ShortcutActivity extends Activity {
         if (isRequestPermission) {
             isRequestPermission = false;
             ShortcutUtils.createShortcut(this, mShortcutBean.id, mShortcutBean.name,
-                    mShortcutBean.className, mShortcutBean.iconId, mShortcutBean.data);
+                mShortcutBean.className, mShortcutBean.iconId, mShortcutBean.data);
             createShortcutTime = System.currentTimeMillis();
             removeCallbacks();
             mEvent = new Runnable() {

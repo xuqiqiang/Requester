@@ -14,7 +14,7 @@ allprojects {
 }
 
 dependencies {
-	implementation 'com.github.xuqiqiang:Requester:1.0.6'
+	implementation 'com.github.xuqiqiang:Requester:1.0.7'
 }
 ```
 
